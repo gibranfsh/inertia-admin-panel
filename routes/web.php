@@ -17,3 +17,11 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return inertia::render('create');
 });
+
+Route::get('/private', function () {
+    $user = auth()->user();
+    $name = $user->name ?? 'User';
+    $email = $user->email ?? '';
+
+    return response('Welcome! You are logged in. Your name is ' . $name . ' and your email is ' . $email . '.');
+})->middleware('auth');
