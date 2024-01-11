@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title', 50)->nullable(false);
             $table->string('description', 300)->nullable(false);
-            $table->string('platform', 15)->nullable(false);
-            $table->string('status', 13)->nullable(false);
+            $table->enum('platform', ['Website', 'Mobile', 'Desktop'])->nullable(false);
+            $table->enum('status', ['ON_PROGRESS', 'FINISHED', 'ON_HOLD', 'CANCELLED'])->nullable(false);
             $table->timestamp('start_date')->nullable(false);
             $table->timestamp('end_date')->nullable(true);
 

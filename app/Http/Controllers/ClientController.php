@@ -8,7 +8,6 @@ use App\Http\Requests\ClientUpdateRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -46,11 +45,11 @@ class ClientController extends Controller
      *
      * @param  int  $id
      * @param  ClientUpdateRequest  $request
-     * @return ClientResource
+     * @return JsonResponse
      *
      * @throws HttpResponseException
      */
-    public function update(int $id, ClientUpdateRequest $request): ClientResource
+    public function update(int $id, ClientUpdateRequest $request): JsonResponse
     {
         $client = Client::findOrFail($id);
 
@@ -58,7 +57,7 @@ class ClientController extends Controller
         $client->fill($data);
         $client->save();
 
-        return new ClientResource($client);
+        return (new ClientResource($client))->response()->setStatusCode(200);
     }
 
     /**

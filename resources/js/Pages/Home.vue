@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <Navbar />
+
+    <div class="mt-3">
         <h1>Welcome, {{ name }}!</h1>
 
         <p>
@@ -15,6 +17,7 @@
 </template>
 
 <script setup>
+import Navbar from "./Navbar.vue";
 import { router } from "@inertiajs/vue3";
 
 defineProps({

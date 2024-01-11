@@ -1,5 +1,7 @@
 <template>
-    <div>
+    <Navbar />
+
+    <div class="mt-3">
         <h1>Clients Table</h1>
 
         <!-- Edit Client Form -->
@@ -52,8 +54,6 @@
                 <tr
                     v-for="client in clients"
                     :key="client.id"
-                    @click="redirectToProjects(client.id)"
-                    :class="{ clickable: true }"
                 >
                     <th scope="row">{{ client.id }}</th>
                     <td>{{ client.name }}</td>
@@ -72,6 +72,12 @@
                             class="btn btn-danger"
                         >
                             Delete
+                        </button>
+                        <button
+                            @click="redirectToProjects(client.id)"
+                            class="btn btn-success"
+                        >
+                            View Projects
                         </button>
                     </td>
                 </tr>
@@ -123,6 +129,7 @@
 </template>
 
 <script setup>
+import Navbar from "./Navbar.vue";
 import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
@@ -150,6 +157,13 @@ const showNewClientForm = () => {
     showForm.value = !showForm.value;
 };
 
+const addNewClient = () => {
+    router.post("/clients", newClient.value);
+    setTimeout(() => {
+        window.location.reload();
+    }, 1000);
+};
+
 const handleEdit = (client) => {
     showEditForm.value = !showEditForm.value;
     editingClient.value = client;
@@ -158,13 +172,6 @@ const handleEdit = (client) => {
 
 const saveEditedClient = () => {
     router.put(`/clients/${editedClient.value.id}`, editedClient.value);
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000);
-};
-
-const addNewClient = () => {
-    router.post("/clients", newClient.value);
     setTimeout(() => {
         window.location.reload();
     }, 1000);
@@ -181,9 +188,3 @@ const redirectToProjects = (id) => {
     router.get(`/clients/${id}/projects`);
 };
 </script>
-
-<style scoped>
-tr.clickable {
-    cursor: pointer;
-}
-</style>
