@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectCreateRequest;
 use App\Http\Requests\ProjectUpdateRequest;
+use App\Http\Resources\ClientResource;
 use App\Http\Resources\ProjectResource;
 use App\Models\Client;
 use App\Models\Project;
@@ -26,8 +27,8 @@ class ProjectController extends Controller
         $projects = $client->projects;
 
         return Inertia::render('Projects', [
-            'client' => $client,
-            'projects' => $projects,
+            'client' => new ClientResource($client),
+            'projects' => ProjectResource::collection($projects)
         ]);
     }
 
@@ -36,11 +37,11 @@ class ProjectController extends Controller
      *
      * @param  int  $idClient
      * @param  ProjectCreateRequest  $request
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws HttpResponseException
      */
-    public function create(int $idClient, ProjectCreateRequest $request): JsonResponse
+    public function create(int $idClient, ProjectCreateRequest $request): \Illuminate\Http\RedirectResponse
     {
         $client = Client::findOrFail($idClient);
 
@@ -49,7 +50,7 @@ class ProjectController extends Controller
         $project->client_id = $client->id;
         $project->save();
 
-        return (new ProjectResource($project))->response()->setStatusCode(201);
+        return to_route('clients.projects.index', $client->id)->with('message', 'Project created successfully!');
     }
 
     /**
@@ -59,11 +60,11 @@ class ProjectController extends Controller
      * @param  int  $idProject
      * @param  ProjectUpdateRequest  $request
      *
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws HttpResponseException
      */
-    public function update(int $idClient, int $idProject, ProjectUpdateRequest $request): JsonResponse
+    public function update(int $idClient, int $idProject, ProjectUpdateRequest $request): \Illuminate\Http\RedirectResponse
     {
         Client::findOrFail($idClient);
         $project = Project::findOrFail($idProject);
@@ -72,7 +73,7 @@ class ProjectController extends Controller
         $project->fill($data);
         $project->save();
 
-        return (new ProjectResource($project))->response()->setStatusCode(200);
+        return to_route('clients.projects.index', $idClient)->with('message', 'Project updated successfully!');
     }
 
     /**
@@ -81,19 +82,17 @@ class ProjectController extends Controller
      * @param  int  $idClient
      * @param  int  $idProject
      *
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws HttpResponseException
      */
-    public function delete(int $idClient, int $idProject): JsonResponse
+    public function delete(int $idClient, int $idProject): \Illuminate\Http\RedirectResponse
     {
         Client::findOrFail($idClient);
         $project = Project::findOrFail($idProject);
 
         $project->delete();
 
-        return response()->json([
-            "message" => "Project successfully deleted."
-        ])->setStatusCode(200);
+        return to_route('clients.projects.index', $idClient)->with('message', 'Project deleted successfully!');
     }
 }

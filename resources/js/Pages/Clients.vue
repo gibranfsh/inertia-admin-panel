@@ -51,10 +51,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr
-                    v-for="client in clients"
-                    :key="client.id"
-                >
+                <tr v-for="client in clients.data" :key="client.id">
                     <th scope="row">{{ client.id }}</th>
                     <td>{{ client.name }}</td>
                     <td>{{ client.email }}</td>
@@ -133,7 +130,7 @@ import Navbar from "./Navbar.vue";
 import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
 
-defineProps({
+const { clients } = defineProps({
     clients: Object,
 });
 
@@ -159,9 +156,6 @@ const showNewClientForm = () => {
 
 const addNewClient = () => {
     router.post("/clients", newClient.value);
-    setTimeout(() => {
-        window.location.reload();
-    }, 1000);
 };
 
 const handleEdit = (client) => {

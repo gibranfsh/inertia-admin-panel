@@ -21,13 +21,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/', [HomeController::class, 'index']);
 
     Route::prefix('clients')->group(function () {
-        Route::get('/', [ClientController::class, 'index']);
+        Route::get('/', [ClientController::class, 'index'])->name('clients.index');
         Route::post('/', [ClientController::class, 'create'])->middleware('auth');
         Route::put('/{id}', [ClientController::class, 'update'])->where('id', '[0-9]+');
         Route::delete('/{id}', [ClientController::class, 'delete'])->where('id', '[0-9]+');
 
         Route::prefix('{idClient}/projects')->group(function () {
-            Route::get('/', [ProjectController::class, 'index'])->where('idClient', '[0-9]+');
+            Route::get('/', [ProjectController::class, 'index'])->where('idClient', '[0-9]+')->name('clients.projects.index');
             Route::post('/', [ProjectController::class, 'create'])->where('idClient', '[0-9]+');
             Route::put('/{idProject}', [ProjectController::class, 'update'])
                 ->where('idClient', '[0-9]+')

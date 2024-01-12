@@ -2,7 +2,7 @@
     <Navbar />
 
     <div class="mt-3">
-        <h1>Projects for : {{ client.name }}</h1>
+        <h1>Projects for : {{ client.data.name }}</h1>
 
         <!-- Edit Project Form -->
         <form v-if="showEditForm" @submit.prevent="saveEditedProject">
@@ -90,7 +90,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="project in projects" :key="project.id">
+                <tr v-for="project in projects.data" :key="project.id">
                     <th scope="row">{{ project.id }}</th>
                     <td>{{ project.title }}</td>
                     <td>{{ project.description }}</td>
@@ -238,7 +238,7 @@ const showNewProjectForm = () => {
 };
 
 const addNewProject = () => {
-    router.post(`/clients/${client.id}/projects`, newProject.value);
+    router.post(`/clients/${client.data.id}/projects`, newProject.value);
     setTimeout(() => {
         window.location.reload();
     }, 1000);
@@ -252,7 +252,7 @@ const handleEdit = (project) => {
 
 const saveEditedProject = () => {
     router.put(
-        `/clients/${client.id}/projects/${editedProject.value.id}`,
+        `/clients/${client.data.id}/projects/${editedProject.value.id}`,
         editedProject.value
     );
     setTimeout(() => {
@@ -261,7 +261,7 @@ const saveEditedProject = () => {
 };
 
 const handleDelete = (project) => {
-    router.delete(`/clients/${client.id}/projects/${project.id}`);
+    router.delete(`/clients/${client.data.id}/projects/${project.id}`);
     setTimeout(() => {
         window.location.reload();
     }, 1000);

@@ -7,7 +7,6 @@ use App\Http\Requests\ClientCreateRequest;
 use App\Http\Requests\ClientUpdateRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
-use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -20,7 +19,7 @@ class ClientController extends Controller
     public function index(): \Inertia\Response
     {
         return Inertia::render('Clients', [
-            'clients' => Client::all()
+            'clients' => ClientResource::collection(Client::all())
         ]);
     }
 
@@ -28,16 +27,16 @@ class ClientController extends Controller
      * Create a new client.
      *
      * @param  ClientCreateRequest  $request
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function create(ClientCreateRequest $request): JsonResponse
+    public function create(ClientCreateRequest $request): \Illuminate\Http\RedirectResponse
     {
         $data = $request->validated();
 
         $client = new Client($data);
         $client->save();
 
-        return (new ClientResource($client))->response()->setStatusCode(201);
+        return to_route('clients.index')->with('message', 'Client created successfully!');
     }
 
     /**
@@ -45,11 +44,11 @@ class ClientController extends Controller
      *
      * @param  int  $id
      * @param  ClientUpdateRequest  $request
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws HttpResponseException
      */
-    public function update(int $id, ClientUpdateRequest $request): JsonResponse
+    public function update(int $id, ClientUpdateRequest $request): \Illuminate\Http\RedirectResponse
     {
         $client = Client::findOrFail($id);
 
@@ -57,25 +56,23 @@ class ClientController extends Controller
         $client->fill($data);
         $client->save();
 
-        return (new ClientResource($client))->response()->setStatusCode(200);
+        return to_route('clients.index')->with('message', 'Client updated successfully!');
     }
 
     /**
      * Delete a client by id.
      *
      * @param  int  $id
-     * @return JsonResponse
+     * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Exception
      */
-    public function delete(int $id): JsonResponse
+    public function delete(int $id): \Illuminate\Http\RedirectResponse
     {
         $client = Client::findOrFail($id);
 
         $client->delete();
 
-        return response()->json([
-            "message" => "Client successfully deleted."
-        ])->setStatusCode(200);
+        return to_route('clients.index')->with('message', 'Client deleted successfully!');
     }
 }
