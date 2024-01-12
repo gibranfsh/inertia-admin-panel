@@ -39,6 +39,20 @@
             <button type="submit" class="btn btn-primary">Save</button>
         </form>
 
+        <!-- Search Bar -->
+        <div class="input-group mb-3">
+            <input
+                v-model="searchTerm"
+                type="search"
+                class="form-control"
+                placeholder="Search clients"
+                aria-label="Search clients"
+            />
+            <button @click="handleSearch" class="btn btn-primary">
+                Search
+            </button>
+        </div>
+
         <table class="table">
             <thead>
                 <tr>
@@ -133,6 +147,12 @@ import { router } from "@inertiajs/vue3";
 const { clients } = defineProps({
     clients: Object,
 });
+
+const searchTerm = ref("");
+
+const handleSearch = () => {
+    router.get("/clients", { search: searchTerm.value });
+};
 
 const showForm = ref(false);
 const newClient = ref({

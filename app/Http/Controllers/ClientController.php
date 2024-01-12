@@ -7,6 +7,7 @@ use App\Http\Requests\ClientCreateRequest;
 use App\Http\Requests\ClientUpdateRequest;
 use App\Http\Resources\ClientResource;
 use App\Models\Client;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ClientController extends Controller
@@ -16,10 +17,19 @@ class ClientController extends Controller
      *
      * @return \Inertia\Response
      */
-    public function index(): \Inertia\Response
+    public function index(Request $request): \Inertia\Response
     {
+        $searchTerm = $request->input('search');
+
+        $clients = Client::when($searchTerm, function ($query) use ($searchTerm) {
+            $query->where('name', 'like', "%{$searchTerm}%")
+                ->orWhere('email', 'like', "%{$searchTerm}%")
+                ->orWhere('phone', 'like', "%{$searchTerm}%");
+        })->get();
+
         return Inertia::render('Clients', [
-            'clients' => ClientResource::collection(Client::all())
+            'clients' => ClientResource::collection($clients),
+            'searchTerm' => $searchTerm,
         ]);
     }
 
